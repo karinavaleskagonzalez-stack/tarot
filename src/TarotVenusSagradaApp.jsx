@@ -175,27 +175,86 @@ export default function TarotVenusSagradaApp() {
     sessionStorage.setItem(claveSesion, JSON.stringify(historial));
   }, [historial, claveSesion]);
 
+  const calcularNumeroCamino = (fecha) => {
+    if (!fecha) return null;
+
+    const numeros = fecha.replaceAll("-", "").split("").map(Number);
+    let suma = numeros.reduce((acc, n) => acc + n, 0);
+
+    while (![1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].includes(suma)) {
+      suma = suma
+        .toString()
+        .split("")
+        .map(Number)
+        .reduce((acc, n) => acc + n, 0);
+    }
+
+    return suma;
+  };
+
+  const numeroCamino = calcularNumeroCamino(fechaNacimiento);
+  const nombreMostrado = nombreConsultante.trim() || "la persona consultante";
+
+  const mensajesNumerologia = {
+    1: "Hoy es un día para tomar la iniciativa y confiar en tu fuerza personal.",
+    2: "Hoy tu energía necesita calma, armonía y escuchar más tu intuición.",
+    3: "Hoy se favorece la expresión, la creatividad y decir lo que sientes.",
+    4: "Hoy conviene ordenar tu energía, poner estructura y avanzar con constancia.",
+    5: "Hoy hay movimiento y cambio; fluye sin perder tu centro.",
+    6: "Hoy el amor, el cuidado y la responsabilidad emocional toman protagonismo.",
+    7: "Hoy necesitas introspección, silencio y conexión espiritual antes de decidir.",
+    8: "Hoy tu poder personal se fortalece; actúa con firmeza y consciencia.",
+    9: "Hoy es momento de cerrar ciclos, soltar y abrir espacio a lo nuevo.",
+    11: "Hoy tu intuición está especialmente elevada; confía en las señales.",
+    22: "Hoy tienes energía para construir algo importante con visión y disciplina.",
+    33: "Hoy tu sensibilidad puede transformarse en guía, contención y sanación.",
+  };
+
+  const mensajeDelDia = numeroCamino
+    ? mensajesNumerologia[numeroCamino]
+    : "Completa la fecha de nacimiento para descubrir tu numerología y recibir tu mensaje del día.";
+
   const generarConclusion = () => {
     if (modoLectura === "tres" && tiradaTresCartas.length === 3) {
+      const invertidas = tiradaTresCartas.filter((c) => c.invertida).length;
+      const derechas = tiradaTresCartas.length - invertidas;
       const nombres = tiradaTresCartas.map((c) => c.nombre);
-      const tieneInvertidas = tiradaTresCartas.some((c) => c.invertida);
+
+      let tono = "";
+      let consejo = "";
+
+      if (derechas === 3) {
+        tono = "fluida y alineada";
+        consejo =
+          "La energía general se encuentra abierta y favorable. Confía en lo que estás sintiendo y avanza con seguridad.";
+      } else if (invertidas === 3) {
+        tono = "bloqueada y desafiante";
+        consejo =
+          "Hay señales claras de tensión interna o desajuste. Conviene pausar, observar y reordenar tu energía antes de seguir avanzando.";
+      } else if (invertidas > derechas) {
+        tono = "inestable, con tendencia al bloqueo";
+        consejo =
+          "Existen alertas que no conviene ignorar. Ajustar tu energía ahora puede cambiar de forma importante el resultado futuro.";
+      } else {
+        tono = "mixta, en proceso de equilibrio";
+        consejo =
+          "Tu proceso muestra luces y desafíos al mismo tiempo. Lo que decidas y ordenes ahora influirá directamente en el camino que se abre.";
+      }
 
       return {
-        titulo: "Conclusión de tu lectura",
-        resumen: `Tu tirada une las energías de ${nombres[0]}, ${nombres[1]} y ${nombres[2]}. Hay un recorrido entre pasado, presente y futuro que muestra el tono general de tu proceso actual.`,
-        consejo: tieneInvertidas
-          ? "Hay aspectos que necesitan observación, orden emocional y más consciencia antes de avanzar con claridad."
-          : "La energía general se ve abierta y favorable. Confía en lo que estás sintiendo y sigue el camino que más resuena contigo.",
+        titulo: "Lectura energética integrada",
+        resumen: `Las cartas ${nombres[0]}, ${nombres[1]} y ${nombres[2]} muestran una energía ${tono} entre pasado, presente y futuro.`,
+        consejo,
       };
     }
 
     if (modoLectura === "una" && cartaActual) {
       return {
-        titulo: "Mensaje final de tu lectura",
-        resumen: `La carta ${cartaActual.nombre} pone el foco en ${cartaActual.tema.toLowerCase()} y te invita a mirar esta energía con más profundidad.`,
+        titulo: "Mensaje central de tu lectura",
+        resumen: `La carta ${cartaActual.nombre} refleja el estado energético principal de tu consulta y pone el foco en ${cartaActual.tema.toLowerCase()}.`,
         consejo: estaInvertida
-          ? "Detente y revisa lo que internamente está generando resistencia o ruido."
-          : "Confía en la energía presente y avanza con más seguridad interior.",
+          ? "La energía pide atención y revisión interna. Hay algo que necesita ser visto con más honestidad antes de seguir."
+          : "La energía está favorecida. Confía en lo que sientes y permite que esta señal guíe tu siguiente paso.",
       };
     }
 
@@ -268,45 +327,6 @@ export default function TarotVenusSagradaApp() {
   };
 
   const conclusion = generarConclusion();
-
-  const calcularNumeroCamino = (fecha) => {
-    if (!fecha) return null;
-
-    const numeros = fecha.replaceAll("-", "").split("").map(Number);
-    let suma = numeros.reduce((acc, n) => acc + n, 0);
-
-    while (![1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].includes(suma)) {
-      suma = suma
-        .toString()
-        .split("")
-        .map(Number)
-        .reduce((acc, n) => acc + n, 0);
-    }
-
-    return suma;
-  };
-
-  const numeroCamino = calcularNumeroCamino(fechaNacimiento);
-  const nombreMostrado = nombreConsultante.trim() || "la persona consultante";
-
-  const mensajesNumerologia = {
-    1: "Hoy es un día para tomar la iniciativa y confiar en tu fuerza personal.",
-    2: "Hoy tu energía necesita calma, armonía y escuchar más tu intuición.",
-    3: "Hoy se favorece la expresión, la creatividad y decir lo que sientes.",
-    4: "Hoy conviene ordenar tu energía, poner estructura y avanzar con constancia.",
-    5: "Hoy hay movimiento y cambio; fluye sin perder tu centro.",
-    6: "Hoy el amor, el cuidado y la responsabilidad emocional toman protagonismo.",
-    7: "Hoy necesitas introspección, silencio y conexión espiritual antes de decidir.",
-    8: "Hoy tu poder personal se fortalece; actúa con firmeza y consciencia.",
-    9: "Hoy es momento de cerrar ciclos, soltar y abrir espacio a lo nuevo.",
-    11: "Hoy tu intuición está especialmente elevada; confía en las señales.",
-    22: "Hoy tienes energía para construir algo importante con visión y disciplina.",
-    33: "Hoy tu sensibilidad puede transformarse en guía, contención y sanación.",
-  };
-
-  const mensajeDelDia = numeroCamino
-    ? mensajesNumerologia[numeroCamino]
-    : "Completa la fecha de nacimiento para descubrir tu numerología y recibir tu mensaje del día.";
 
   return (
     <div
@@ -507,12 +527,16 @@ export default function TarotVenusSagradaApp() {
                   padding: "13px 22px",
                   borderRadius: "16px",
                   border: "none",
-                  background: puedeLeer ? "#f3c6d8" : "rgba(243,198,216,0.4)",
+                  background: puedeLeer
+                    ? "#f3c6d8"
+                    : "rgba(243,198,216,0.4)",
                   color: "#2d1127",
                   cursor: puedeLeer ? "pointer" : "not-allowed",
                   fontWeight: "bold",
                   fontSize: "15px",
-                  boxShadow: puedeLeer ? "0 8px 20px rgba(243,198,216,0.2)" : "none",
+                  boxShadow: puedeLeer
+                    ? "0 8px 20px rgba(243,198,216,0.2)"
+                    : "none",
                 }}
               >
                 Sacar una carta
@@ -568,7 +592,9 @@ export default function TarotVenusSagradaApp() {
               </button>
 
               <button
-                onClick={() => setMostrarInterpretacion(!mostrarInterpretacion)}
+                onClick={() =>
+                  setMostrarInterpretacion(!mostrarInterpretacion)
+                }
                 style={{
                   padding: "13px 22px",
                   borderRadius: "16px",
@@ -580,7 +606,9 @@ export default function TarotVenusSagradaApp() {
                   fontSize: "15px",
                 }}
               >
-                {mostrarInterpretacion ? "Ocultar interpretación" : "Mostrar interpretación"}
+                {mostrarInterpretacion
+                  ? "Ocultar interpretación"
+                  : "Mostrar interpretación"}
               </button>
             </div>
           </div>
@@ -651,7 +679,9 @@ export default function TarotVenusSagradaApp() {
                         borderRadius: "18px",
                         boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
                         objectFit: "cover",
-                        transform: carta.invertida ? "rotate(180deg)" : "rotate(0deg)",
+                        transform: carta.invertida
+                          ? "rotate(180deg)"
+                          : "rotate(0deg)",
                         transition: "transform 0.6s ease",
                       }}
                     />
@@ -691,9 +721,15 @@ export default function TarotVenusSagradaApp() {
                           }}
                         >
                           {carta.posicion === "Pasado"
-                            ? "Esta carta habla de la energía o experiencia que te trajo hasta aquí."
+                            ? carta.invertida
+                              ? "Esta energía del pasado aún no se ha resuelto completamente y podría seguir influyendo en tu presente."
+                              : "Esta carta habla de la energía o experiencia que te trajo hasta aquí."
                             : carta.posicion === "Presente"
-                            ? "Esta carta muestra la vibración que hoy está más activa en tu proceso."
+                            ? carta.invertida
+                              ? "Actualmente hay bloqueos, tensión o desalineación que requieren atención y consciencia."
+                              : "Esta carta muestra la vibración que hoy está más activa en tu proceso."
+                            : carta.invertida
+                            ? "El futuro podría presentar obstáculos si no se ajusta la energía actual."
                             : "Esta carta sugiere la dirección probable si mantienes tu energía actual."}
                         </p>
                       </>
@@ -706,7 +742,8 @@ export default function TarotVenusSagradaApp() {
                           textAlign: "center",
                         }}
                       >
-                        La interpretación está oculta. Puedes revelarla cuando quieras.
+                        La interpretación está oculta. Puedes revelarla cuando
+                        quieras.
                       </p>
                     )}
                   </div>
@@ -724,10 +761,21 @@ export default function TarotVenusSagradaApp() {
                 }}
               >
                 <div style={{ fontSize: "62px", marginBottom: "12px" }}>🔮</div>
-                <h2 style={{ fontSize: "clamp(24px, 4vw, 34px)", marginBottom: "10px" }}>
+                <h2
+                  style={{
+                    fontSize: "clamp(24px, 4vw, 34px)",
+                    marginBottom: "10px",
+                  }}
+                >
                   Aún no hay carta revelada
                 </h2>
-                <p style={{ color: "#eed8e2", fontSize: "18px", lineHeight: "1.6" }}>
+                <p
+                  style={{
+                    color: "#eed8e2",
+                    fontSize: "18px",
+                    lineHeight: "1.6",
+                  }}
+                >
                   {fraseInicio}
                 </p>
               </div>
@@ -758,7 +806,9 @@ export default function TarotVenusSagradaApp() {
                       borderRadius: "20px",
                       boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
                       objectFit: "cover",
-                      transform: estaInvertida ? "rotate(180deg)" : "rotate(0deg)",
+                      transform: estaInvertida
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
                       transition: "transform 0.6s ease",
                     }}
                   />
@@ -774,7 +824,13 @@ export default function TarotVenusSagradaApp() {
                     {cartaActual.nombre}
                   </h3>
 
-                  <p style={{ textAlign: "center", color: "#f4c7da", fontSize: "20px" }}>
+                  <p
+                    style={{
+                      textAlign: "center",
+                      color: "#f4c7da",
+                      fontSize: "20px",
+                    }}
+                  >
                     {cartaActual.palabraClave}
                   </p>
 
@@ -817,7 +873,9 @@ export default function TarotVenusSagradaApp() {
                           color: "#fff3f8",
                         }}
                       >
-                        {estaInvertida ? cartaActual.invertido : cartaActual.mensaje}
+                        {estaInvertida
+                          ? cartaActual.invertido
+                          : cartaActual.mensaje}
                       </p>
 
                       <p
@@ -834,8 +892,15 @@ export default function TarotVenusSagradaApp() {
                       </p>
                     </>
                   ) : (
-                    <p style={{ marginTop: "16px", color: "#e9c9d7", lineHeight: "1.6" }}>
-                      La interpretación está oculta. Puedes revelarla cuando quieras.
+                    <p
+                      style={{
+                        marginTop: "16px",
+                        color: "#e9c9d7",
+                        lineHeight: "1.6",
+                      }}
+                    >
+                      La interpretación está oculta. Puedes revelarla cuando
+                      quieras.
                     </p>
                   )}
                 </div>
@@ -925,7 +990,10 @@ export default function TarotVenusSagradaApp() {
             </p>
             <div style={{ color: "#f6e7ee", lineHeight: "1.75" }}>
               <p>1. Completa nombre, fecha de nacimiento y pregunta.</p>
-              <p>2. Presiona <strong>Sacar una carta</strong> o <strong>Tirada de 3 cartas</strong>.</p>
+              <p>
+                2. Presiona <strong>Sacar una carta</strong> o{" "}
+                <strong>Tirada de 3 cartas</strong>.
+              </p>
               <p>3. Observa si la carta salió derecha o invertida.</p>
               <p>4. Lee el mensaje, la lectura y el cierre final.</p>
             </div>
@@ -972,8 +1040,16 @@ export default function TarotVenusSagradaApp() {
                       padding: "12px 16px",
                     }}
                   >
-                    <div style={{ fontWeight: "bold", color: "#fff3f8" }}>{item.nombre}</div>
-                    <div style={{ color: "#e6bfd1", fontSize: "14px", marginTop: "4px" }}>
+                    <div style={{ fontWeight: "bold", color: "#fff3f8" }}>
+                      {item.nombre}
+                    </div>
+                    <div
+                      style={{
+                        color: "#e6bfd1",
+                        fontSize: "14px",
+                        marginTop: "4px",
+                      }}
+                    >
                       {item.orientacion}
                     </div>
                   </div>
