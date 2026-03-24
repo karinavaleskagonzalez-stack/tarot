@@ -269,6 +269,45 @@ export default function TarotVenusSagradaApp() {
 
   const conclusion = generarConclusion();
 
+  const calcularNumeroCamino = (fecha) => {
+    if (!fecha) return null;
+
+    const numeros = fecha.replaceAll("-", "").split("").map(Number);
+    let suma = numeros.reduce((acc, n) => acc + n, 0);
+
+    while (![1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22, 33].includes(suma)) {
+      suma = suma
+        .toString()
+        .split("")
+        .map(Number)
+        .reduce((acc, n) => acc + n, 0);
+    }
+
+    return suma;
+  };
+
+  const numeroCamino = calcularNumeroCamino(fechaNacimiento);
+  const nombreMostrado = nombreConsultante.trim() || "la persona consultante";
+
+  const mensajesNumerologia = {
+    1: "Hoy es un día para tomar la iniciativa y confiar en tu fuerza personal.",
+    2: "Hoy tu energía necesita calma, armonía y escuchar más tu intuición.",
+    3: "Hoy se favorece la expresión, la creatividad y decir lo que sientes.",
+    4: "Hoy conviene ordenar tu energía, poner estructura y avanzar con constancia.",
+    5: "Hoy hay movimiento y cambio; fluye sin perder tu centro.",
+    6: "Hoy el amor, el cuidado y la responsabilidad emocional toman protagonismo.",
+    7: "Hoy necesitas introspección, silencio y conexión espiritual antes de decidir.",
+    8: "Hoy tu poder personal se fortalece; actúa con firmeza y consciencia.",
+    9: "Hoy es momento de cerrar ciclos, soltar y abrir espacio a lo nuevo.",
+    11: "Hoy tu intuición está especialmente elevada; confía en las señales.",
+    22: "Hoy tienes energía para construir algo importante con visión y disciplina.",
+    33: "Hoy tu sensibilidad puede transformarse en guía, contención y sanación.",
+  };
+
+  const mensajeDelDia = numeroCamino
+    ? mensajesNumerologia[numeroCamino]
+    : "Completa la fecha de nacimiento para descubrir tu numerología y recibir tu mensaje del día.";
+
   return (
     <div
       style={{
@@ -280,13 +319,23 @@ export default function TarotVenusSagradaApp() {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      <div className="tarot-layout" style={{ maxWidth: "1200px", margin: "0 auto", display: "grid", gridTemplateColumns: "minmax(0, 2fr) minmax(280px, 1fr)", gap: "20px" }}>
+      <div
+        className="tarot-layout"
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          display: "grid",
+          gridTemplateColumns: "minmax(0, 2fr) minmax(280px, 1fr)",
+          gap: "20px",
+        }}
+      >
         <div style={{ display: "grid", gap: "20px" }}>
           <div
             style={{
               borderRadius: "28px",
               border: "1px solid rgba(255,255,255,0.10)",
-              background: "linear-gradient(180deg, rgba(104,22,122,0.28), rgba(255,255,255,0.04))",
+              background:
+                "linear-gradient(180deg, rgba(104,22,122,0.28), rgba(255,255,255,0.04))",
               padding: "28px",
               boxShadow: "0 20px 50px rgba(0,0,0,0.28)",
             }}
@@ -329,9 +378,24 @@ export default function TarotVenusSagradaApp() {
               Un oráculo femenino digital para amor propio, intuición, vínculos, ciclos y poder personal.
             </p>
 
-            <div className="tarot-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "18px" }}>
+            <div
+              className="tarot-form-grid"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "14px",
+                marginBottom: "18px",
+              }}
+            >
               <div>
-                <label style={{ display: "block", marginBottom: "8px", color: "#f1d9e3", fontSize: "14px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "8px",
+                    color: "#f1d9e3",
+                    fontSize: "14px",
+                  }}
+                >
                   Nombre
                 </label>
                 <input
@@ -354,7 +418,14 @@ export default function TarotVenusSagradaApp() {
               </div>
 
               <div>
-                <label style={{ display: "block", marginBottom: "8px", color: "#f1d9e3", fontSize: "14px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "8px",
+                    color: "#f1d9e3",
+                    fontSize: "14px",
+                  }}
+                >
                   Fecha de nacimiento
                 </label>
                 <input
@@ -376,7 +447,14 @@ export default function TarotVenusSagradaApp() {
               </div>
 
               <div style={{ gridColumn: "1 / -1" }}>
-                <label style={{ display: "block", marginBottom: "8px", color: "#f1d9e3", fontSize: "14px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "8px",
+                    color: "#f1d9e3",
+                    fontSize: "14px",
+                  }}
+                >
                   Tu pregunta
                 </label>
                 <textarea
@@ -511,7 +589,8 @@ export default function TarotVenusSagradaApp() {
             style={{
               borderRadius: "28px",
               border: "1px solid rgba(255,255,255,0.08)",
-              background: "linear-gradient(180deg, rgba(88,18,101,0.22), rgba(255,255,255,0.04))",
+              background:
+                "linear-gradient(180deg, rgba(88,18,101,0.22), rgba(255,255,255,0.04))",
               padding: "24px",
               boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
             }}
@@ -572,6 +651,8 @@ export default function TarotVenusSagradaApp() {
                         borderRadius: "18px",
                         boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
                         objectFit: "cover",
+                        transform: carta.invertida ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 0.6s ease",
                       }}
                     />
 
@@ -677,6 +758,8 @@ export default function TarotVenusSagradaApp() {
                       borderRadius: "20px",
                       boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
                       objectFit: "cover",
+                      transform: estaInvertida ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.6s ease",
                     }}
                   />
 
@@ -824,7 +907,8 @@ export default function TarotVenusSagradaApp() {
             style={{
               borderRadius: "28px",
               border: "1px solid rgba(255,255,255,0.10)",
-              background: "linear-gradient(180deg, rgba(88,18,101,0.18), rgba(255,255,255,0.04))",
+              background:
+                "linear-gradient(180deg, rgba(88,18,101,0.18), rgba(255,255,255,0.04))",
               padding: "24px",
             }}
           >
@@ -851,7 +935,8 @@ export default function TarotVenusSagradaApp() {
             style={{
               borderRadius: "28px",
               border: "1px solid rgba(255,255,255,0.10)",
-              background: "linear-gradient(180deg, rgba(88,18,101,0.18), rgba(255,255,255,0.04))",
+              background:
+                "linear-gradient(180deg, rgba(88,18,101,0.18), rgba(255,255,255,0.04))",
               padding: "24px",
             }}
           >
@@ -901,7 +986,8 @@ export default function TarotVenusSagradaApp() {
             style={{
               borderRadius: "28px",
               border: "1px solid rgba(255,255,255,0.10)",
-              background: "linear-gradient(180deg, rgba(88,18,101,0.18), rgba(255,255,255,0.04))",
+              background:
+                "linear-gradient(180deg, rgba(88,18,101,0.18), rgba(255,255,255,0.04))",
               padding: "24px",
             }}
           >
@@ -914,10 +1000,29 @@ export default function TarotVenusSagradaApp() {
                 marginBottom: "14px",
               }}
             >
-              Próxima mejora
+              Mensaje del día para {nombreMostrado}
             </p>
-            <p style={{ color: "#f6e7ee", lineHeight: "1.7" }}>
-              En la siguiente versión podemos añadir barajado visual, animación de giro y una portada inicial más ceremonial.
+
+            <p
+              style={{
+                color: "#fff3f8",
+                fontSize: "18px",
+                fontWeight: "bold",
+                marginBottom: "12px",
+                lineHeight: "1.6",
+              }}
+            >
+              Numerología: {numeroCamino ? numeroCamino : "pendiente"}
+            </p>
+
+            <p
+              style={{
+                color: "#f6e7ee",
+                lineHeight: "1.8",
+                fontSize: "16px",
+              }}
+            >
+              {mensajeDelDia}
             </p>
           </div>
         </div>
